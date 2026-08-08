@@ -1,8 +1,7 @@
-version: '2'
 services:
- apache:
-   build: .
+ web:
+   image: vulhub/php:7.0.30
    volumes:
     - ./www:/var/www/html
    ports:
-    - "80:80"
+    - "8080:80"

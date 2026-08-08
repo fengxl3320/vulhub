@@ -1,69 +1,119 @@
-# Vulhub - Some Docker-Compose files for vulnerabilities environment
+<!-- markdownlint-disable first-line-heading -->
+<p align="center">
+  <a href="https://vulhub.org" target="_blank"><img src=".github/assets/banner.png" alt="Vulhub" height="auto" /></a>
+</p>
 
-Vulhub是一个面向大众的开源漏洞靶场，无需docker知识，简单执行两条命令即可编译、运行一个完整的漏洞靶场镜像。
+<p align="center">
+  <a href="https://discord.gg/bQCpZEK" target="_blank"><img src="https://img.shields.io/discord/485505185167179778.svg" alt="Chat on Discord"></a>
+  <a href="https://github.com/sponsors/phith0n" target="_blank"><img src="https://img.shields.io/github/sponsors/phith0n?color=aqua" alt="GitHub Sponsors"></a>
+  <a href="https://vulhub.org/environments" target="_blank"><img alt="Vulnerabilities count" src="https://img.shields.io/badge/dynamic/json?url=https://vulhub.org/api/statistic&query=%24.environments&label=vulnerabilities"></a>
+  <img alt="GitHub language count" src="https://img.shields.io/github/languages/count/vulhub/vulhub?color=yellow">
+  <a href="https://github.com/vulhub/vulhub/graphs/contributors" target="_blank"><img alt="GitHub contributors" src="https://img.shields.io/github/contributors-anon/vulhub/vulhub?color=orange"></a>
+  <a href="https://github.com/vulhub/vulhub/blob/master/LICENSE" target="_blank"><img src="https://img.shields.io/github/license/vulhub/vulhub.svg" alt="GitHub"></a>
+</p>
 
-在ubuntu16.04下安装docker/docker-compose:
+Vulhub is an open-source collection of pre-built, ready-to-use vulnerable Docker environments. With just one command you can launch a vulnerable environment for security research, learning, or demonstration, no prior Docker experience required.
 
-## Installation
+[中文版本(Chinese version)](README.zh-cn.md)
+
+## Quick Start
+
+**Install Docker** (example for Ubuntu 24.04):
 
 ```bash
-# 安装pip
-curl -s https://bootstrap.pypa.io/get-pip.py | python3
-
-# 安装最新版docker
+# Install the latest version docker
 curl -s https://get.docker.com/ | sh
 
-# 启动docker服务
-service docker start
-
-# 安装compose
-pip install docker-compose 
+# Run docker service
+systemctl start docker
 ```
 
-其他操作系统安装docker和docker-compose可能会有些许不同，请阅读Docker文档进行安装。
+For other operating systems, see the [Docker documentation](https://docs.docker.com/).
 
-## Usage
+Although all Vulhub environments are running based on Docker Compose, you no longer need to install docker-compose separately. Instead, you can use the built-in `docker compose` command to start Vulhub environments.
+
+**Download and set up Vulhub:**
 
 ```bash
-# 拉取项目
-git clone https://github.com/vulhub/vulhub.git
-cd vulhub
-
-# 进入某一个漏洞/环境的目录
-cd flask/ssti
-
-# 自动化编译环境
-docker-compose build
-
-# 启动整个环境
-docker-compose up -d
+git clone --depth 1 https://github.com/vulhub/vulhub
 ```
 
-每个环境目录下都有相应的说明文件，请阅读该文件，进行漏洞/环境测试。
+**Launch a vulnerable environment:**
 
-测试完成后，删除整个环境
-
+```bash
+cd vulhub/langflow/CVE-2025-3248  # Example: enter a vulnerability directory
+docker compose up -d
 ```
-docker-compose down
+
+Each environment directory contains a detailed **README** with reproduction steps and usage instructions.
+
+**Clean up after testing:**
+
+```bash
+docker compose down -v
 ```
 
-本项目每个漏洞环境均附带文档，建议你购买1G内存的vps搭建漏洞测试环境，文档中所说的`your-ip`均指你的vps的ip地址，如果你是用虚拟机搭建测试环境，是指你的虚拟机IP，而不是docker容器内部的IP，请不要混淆。
+> [!NOTE]
+>
+> - Use a VPS or VM with at least 1GB RAM for best results
+> - The `your-ip` in documentation refers to your host/VPS IP, not the Docker container IP
+> - Ensure Docker has permission to access all files in the current directory to avoid permission errors
+> - Some environments may not support ARM architectures, see [Troubleshooting](#troubleshooting) for details
+> - **All environments are for testing and educational purposes only. Do not use in production!**
 
-**本项目中所有环境仅用于测试，不可作为生产环境使用！**
+## Troubleshooting
 
-## Notice
+**Docker image pull fails in mainland China**
 
-注意事项：
+Docker Hub may be inaccessible from mainland China. Use a registry mirror or run Vulhub on an overseas VPS.
 
-1. 为防止出现权限错误，最好使用root用户执行docker和docker-compose命令
-2. docker部分镜像不支持在ARM等架构的机器上运行
+**Environments fail to start on Apple Silicon (M-series) Macs**
 
-## Contribution
+Most Vulhub environments run natively on Docker Desktop for Mac with M-series chips. If an environment fails, try setting the platform explicitly:
 
-本项目依赖于docker，在编译及运行过程中出现的任意异常都是docker以及相关程序抛出的，请先自行查找错误原因。如果确定是因为Dockerfile编写错误（或vulhub中代码错误）导致的，再提交issue。更多说明请[这篇文档文档](https://github.com/phith0n/vulhub/wiki/%E7%BC%96%E8%AF%91%E5%A4%B1%E8%B4%A5%E7%9A%84%E5%8E%9F%E5%9B%A0)，希望可以对你有所帮助。
+```bash
+export DOCKER_DEFAULT_PLATFORM=linux/amd64
+docker compose up -d
+```
 
-致谢列表：[Contributors List](contributors.md)
+**Environments fail on Kali Linux**
+
+Some environments may fail on Kali Linux due to a low `ulimit nofile` setting. See the [FAQ](https://vulhub.org/documentation/faq) for the fix.
+
+If you encounter issues that you cannot resolve, feel free to seek help from the community:
+
+- [Discord](https://discord.gg/bQCpZEK)
+- [X (Twitter)](https://x.com/vulhub)
+
+## Contributing
+
+We welcome contributions! Please read our [Contributing Guide](CONTRIBUTING.md) to get started.
+
+Thanks to all contributors:
+
+[![](https://opencollective.com/vulhub/contributors.svg?width=890&button=false)](https://github.com/vulhub/vulhub/graphs/contributors)
+
+## Partners
+
+Our partners and users:
+
+<p>
+  <a href="https://www.wangan.com/vulhub" target="_blank"><img src="https://vulhub.org/sponsor/wangan.png" width="200"></a>
+  <a href="https://www.cvebase.com" target="_blank"><img src="https://vulhub.org/sponsor/cvebase.png" width="200"></a>
+  <a href="https://www.huoxian.cn" target="_blank"><img src="https://vulhub.org/sponsor/huoxian.png" width="200"></a>
+  <a href="https://www.chaitin.cn" target="_blank"><img src="https://vulhub.org/sponsor/chaitin.png" width="200"></a>
+  <a href="https://xianzhi.aliyun.com/" target="_blank"><img src="https://vulhub.org/sponsor/aliyun.svg" width="200"></a>
+</p>
+
+Sponsor Vulhub on [GitHub Sponsor](https://github.com/sponsors/phith0n), [OpenCollective](https://opencollective.com/vulhub#backer), or [Patreon](https://www.patreon.com/bePatron?u=12677520) 🙏
+
+<p>
+  <a href="https://github.com/sponsors/phith0n"><img src="https://opencollective.com/vulhub/backers.svg?width=138"></a>
+  <a href="https://github.com/sponsors/phith0n"><img src="https://opencollective.com/vulhub/sponsors.svg?width=138"></a>
+</p>
+
+More ways to [donate](https://vulhub.org/).
 
 ## License
 
-Vulhub is released under the [GPL-3.0 license](LICENSE).
+Vulhub is licensed under the MIT License. See [LICENSE](LICENSE) for details.
